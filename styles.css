@@ -22,6 +22,9 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 120px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 body {
@@ -31,7 +34,9 @@ body {
     linear-gradient(135deg, #171717 0%, #111111 60%, #090909 100%);
   color: var(--text);
   font-family: "Space Grotesk", sans-serif;
-  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 body::before {
@@ -50,6 +55,15 @@ body.is-loading {
   overflow: hidden;
 }
 
+body.has-cursor-fx,
+body.has-cursor-fx a,
+body.has-cursor-fx button,
+body.has-cursor-fx input,
+body.has-cursor-fx textarea,
+body.has-cursor-fx label {
+  cursor: none;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -62,6 +76,7 @@ a {
   display: grid;
   place-items: center;
   padding: 20px;
+  overflow: hidden;
   background:
     linear-gradient(135deg, rgba(255, 142, 216, 0.18), transparent 30%),
     linear-gradient(315deg, rgba(103, 212, 255, 0.16), transparent 35%),
@@ -76,12 +91,14 @@ body.is-loaded .loader {
 
 .loader-card {
   width: min(620px, 100%);
+  max-width: calc(100vw - 40px);
   padding: 28px;
   border: var(--border);
   border-radius: 32px;
   background: var(--panel-2);
   color: var(--ink);
   box-shadow: 14px 14px 0 #000000;
+  overflow: hidden;
 }
 
 .loader-label {
@@ -101,6 +118,7 @@ body.is-loaded .loader {
 }
 
 .loader-title span {
+  display: block;
   transform: translateX(0);
   animation: loaderBounce 900ms cubic-bezier(0.22, 1, 0.36, 1) infinite alternate;
 }
@@ -131,6 +149,65 @@ body.is-loaded .loader {
   border-radius: 999px;
   background: linear-gradient(90deg, var(--yellow), var(--blue), var(--pink));
   animation: loaderSlide 1.3s ease-in-out infinite;
+}
+
+.cursor-core,
+.cursor-outline {
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 80;
+  will-change: transform, opacity;
+}
+
+.cursor-core {
+  width: 14px;
+  height: 14px;
+  border: 3px solid #0a0a0a;
+  border-radius: 5px;
+  background: var(--yellow);
+  box-shadow: 4px 4px 0 #0a0a0a;
+}
+
+.cursor-outline {
+  width: 34px;
+  height: 34px;
+  border: 3px solid var(--panel-2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+body.has-cursor-fx .cursor-core,
+body.has-cursor-fx .cursor-outline {
+  opacity: 0.95;
+}
+
+body.is-pointer-idle .cursor-core,
+body.is-pointer-idle .cursor-outline {
+  opacity: 0;
+}
+
+body.cursor-mode-open .cursor-core {
+  background: var(--blue);
+}
+
+body.cursor-mode-open .cursor-outline {
+  border-color: var(--blue);
+}
+
+body.cursor-mode-type .cursor-core {
+  background: var(--pink);
+}
+
+body.cursor-mode-type .cursor-outline {
+  border-color: var(--pink);
+}
+
+body.cursor-pressed .cursor-core {
+  background: var(--red);
 }
 
 .page-shell {
@@ -491,6 +568,30 @@ body.is-loaded .page-shell {
   background: #ffffff;
   font-weight: 700;
   box-shadow: 5px 5px 0 #0a0a0a;
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms ease,
+    background 220ms ease,
+    color 220ms ease;
+}
+
+.skill-marquee span:hover {
+  transform: translate(-6px, -6px) rotate(-1.5deg);
+  box-shadow: 10px 10px 0 #0a0a0a;
+  background: var(--yellow);
+}
+
+.skill-marquee span:nth-child(2n):hover {
+  transform: translate(-6px, -6px) rotate(1.5deg);
+  background: var(--blue);
+}
+
+.skill-marquee span:nth-child(3n):hover {
+  background: var(--pink);
+}
+
+.skill-marquee span:nth-child(4n):hover {
+  background: var(--green);
 }
 
 .skill-cards {
@@ -696,6 +797,8 @@ body.is-loaded .page-shell {
   .loader,
   .loader-title span,
   .loader-bar span,
+  .cursor-core,
+  .cursor-outline,
   .float-card,
   .reveal,
   .card,
@@ -755,6 +858,10 @@ body.is-loaded .page-shell {
     margin-top: 10px;
   }
 
+  .loader {
+    padding: 12px;
+  }
+
   .site-header {
     position: static;
     gap: 14px;
@@ -774,6 +881,29 @@ body.is-loaded .page-shell {
   .mini-card,
   .loader-card {
     padding: 20px;
+  }
+
+  .loader-card {
+    width: min(100%, 400px);
+    max-width: calc(100vw - 24px);
+    border-radius: 24px;
+    box-shadow: 6px 6px 0 #000000;
+  }
+
+  .loader-title {
+    font-size: clamp(2.2rem, 14vw, 3.6rem);
+    line-height: 0.92;
+  }
+
+  .loader-label {
+    margin-bottom: 14px;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+  }
+
+  .loader-bar {
+    margin-top: 18px;
+    height: 18px;
   }
 
   .hero h1 {
