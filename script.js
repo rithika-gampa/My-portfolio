@@ -177,7 +177,18 @@ sections.forEach((section) => sectionObserver.observe(section));
 const revealObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
-      entry.target.classList.toggle("is-visible", entry.isIntersecting);
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        return;
+      }
+
+      const isFullyOutsideViewport =
+        entry.boundingClientRect.bottom <= 0 ||
+        entry.boundingClientRect.top >= window.innerHeight;
+
+      if (isFullyOutsideViewport) {
+        entry.target.classList.remove("is-visible");
+      }
     });
   },
   {
