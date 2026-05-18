@@ -214,7 +214,7 @@ if (contactForm && formNote) {
     );
 
     formNote.textContent = "Opening your mail app...";
-    window.location.href = `mailto:hello@example.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:rithikagampawork@gmail.com?subject=${subject}&body=${body}`;
     contactForm.reset();
   });
 }
