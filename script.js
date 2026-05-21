@@ -244,13 +244,10 @@ const buildMailtoUrl = ({ name = "", message = "" } = {}) => {
   if (cleanMessage) {
     bodyLines.push(cleanMessage);
   }
+  const encodedSubject = encodeURIComponent(subject);
+  const encodedBody = encodeURIComponent(bodyLines.join("\n"));
 
-  const params = new URLSearchParams({
-    subject,
-    body: bodyLines.join("\n"),
-  });
-
-  return `mailto:rithikagampawork@gmail.com?${params.toString()}`;
+  return `mailto:rithikagampawork@gmail.com?subject=${encodedSubject}&body=${encodedBody}`;
 };
 
 if (contactMailLink) {
