@@ -208,10 +208,8 @@ const buildGmailComposeUrl = ({ name = "", message = "" } = {}) => {
     : "Portfolio inquiry";
   const bodyLines = [];
 
-  if (cleanName) {
-    bodyLines.push(`Name: ${cleanName}`);
-    bodyLines.push("");
-  }
+  bodyLines.push(`Name: ${cleanName}`);
+  bodyLines.push("");
 
   if (cleanMessage) {
     bodyLines.push(cleanMessage);
