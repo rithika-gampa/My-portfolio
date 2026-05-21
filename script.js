@@ -205,16 +205,22 @@ if (contactForm && formNote) {
 
     const formData = new FormData(contactForm);
     const name = String(formData.get("name") || "").trim();
-    const email = String(formData.get("email") || "").trim();
     const message = String(formData.get("message") || "").trim();
+    const body = encodeURIComponent(`${name}\n\n${message}`);
+    const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=rithikagampawork@gmail.com&body=${body}`;
 
-    const subject = encodeURIComponent(`Portfolio inquiry from ${name}`);
-    const body = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
+    formNote.textContent = "Opening Gmail in a new tab...";
+
+    const openedWindow = window.open(
+      gmailComposeUrl,
+      "_blank",
+      "noopener,noreferrer"
     );
 
-    formNote.textContent = "Opening your mail app...";
-    window.location.href = `mailto:rithikagampawork@gmail.com?subject=${subject}&body=${body}`;
+    if (!openedWindow) {
+      window.location.href = gmailComposeUrl;
+    }
+
     contactForm.reset();
   });
 }
