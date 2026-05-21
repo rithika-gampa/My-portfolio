@@ -239,15 +239,7 @@ if (contactMailLink) {
     const message = String(formData?.get("message") || "").trim();
     const gmailComposeUrl = buildGmailComposeUrl({ name, message });
 
-    const openedWindow = window.open(
-      gmailComposeUrl,
-      "_blank",
-      "noopener,noreferrer"
-    );
-
-    if (!openedWindow) {
-      window.location.href = gmailComposeUrl;
-    }
+    window.open(gmailComposeUrl, "_blank", "noopener,noreferrer");
   });
 }
 
@@ -262,15 +254,7 @@ if (contactForm && formNote) {
 
     formNote.textContent = "Opening Gmail in a new tab...";
 
-    const openedWindow = window.open(
-      gmailComposeUrl,
-      "_blank",
-      "noopener,noreferrer"
-    );
-
-    if (!openedWindow) {
-      window.location.href = gmailComposeUrl;
-    }
+    window.open(gmailComposeUrl, "_blank", "noopener,noreferrer");
 
     contactForm.reset();
   });
