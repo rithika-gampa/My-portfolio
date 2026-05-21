@@ -3,6 +3,7 @@ const sections = document.querySelectorAll("main section[id]");
 const revealItems = document.querySelectorAll(".reveal");
 const contactForm = document.querySelector("#contact-form");
 const formNote = document.querySelector("#form-note");
+const contactMailLink = document.querySelector("#contact-mail-link");
 const loader = document.querySelector("#loader");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const canUseCursorFx =
@@ -199,6 +200,59 @@ const revealObserver = new IntersectionObserver(
 
 revealItems.forEach((item) => revealObserver.observe(item));
 
+const buildGmailComposeUrl = ({ name = "", message = "" } = {}) => {
+  const cleanName = name.trim();
+  const cleanMessage = message.trim();
+  const subject = cleanName
+    ? `Portfolio inquiry from ${cleanName}`
+    : "Portfolio inquiry";
+  const bodyLines = [];
+
+  if (cleanName) {
+    bodyLines.push(`Name: ${cleanName}`);
+    bodyLines.push("");
+  }
+
+  if (cleanMessage) {
+    bodyLines.push(cleanMessage);
+  }
+
+  const params = new URLSearchParams({
+    view: "cm",
+    fs: "1",
+    tf: "1",
+    to: "rithikagampawork@gmail.com",
+    su: subject,
+  });
+
+  if (bodyLines.length > 0) {
+    params.set("body", bodyLines.join("\n"));
+  }
+
+  return `https://mail.google.com/mail/u/0/?${params.toString()}`;
+};
+
+if (contactMailLink) {
+  contactMailLink.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    const formData = contactForm ? new FormData(contactForm) : null;
+    const name = String(formData?.get("name") || "").trim();
+    const message = String(formData?.get("message") || "").trim();
+    const gmailComposeUrl = buildGmailComposeUrl({ name, message });
+
+    const openedWindow = window.open(
+      gmailComposeUrl,
+      "_blank",
+      "noopener,noreferrer"
+    );
+
+    if (!openedWindow) {
+      window.location.href = gmailComposeUrl;
+    }
+  });
+}
+
 if (contactForm && formNote) {
   contactForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -206,8 +260,7 @@ if (contactForm && formNote) {
     const formData = new FormData(contactForm);
     const name = String(formData.get("name") || "").trim();
     const message = String(formData.get("message") || "").trim();
-    const body = encodeURIComponent(`${name}\n\n${message}`);
-    const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=rithikagampawork@gmail.com&body=${body}`;
+    const gmailComposeUrl = buildGmailComposeUrl({ name, message });
 
     formNote.textContent = "Opening Gmail in a new tab...";
 
