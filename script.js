@@ -6,6 +6,9 @@ const formNote = document.querySelector("#form-note");
 const contactMailLink = document.querySelector("#contact-mail-link");
 const loader = document.querySelector("#loader");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const shouldUseMailApp =
+  window.matchMedia("(pointer: coarse)").matches ||
+  /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 const canUseCursorFx =
   window.matchMedia("(pointer: fine)").matches && !reduceMotion;
 
@@ -230,6 +233,26 @@ const buildGmailComposeUrl = ({ name = "", message = "" } = {}) => {
   return `https://mail.google.com/mail/u/0/?${params.toString()}`;
 };
 
+const buildMailtoUrl = ({ name = "", message = "" } = {}) => {
+  const cleanName = name.trim();
+  const cleanMessage = message.trim();
+  const subject = cleanName
+    ? `Portfolio inquiry from ${cleanName}`
+    : "Portfolio inquiry";
+  const bodyLines = [`Name: ${cleanName}`, ""];
+
+  if (cleanMessage) {
+    bodyLines.push(cleanMessage);
+  }
+
+  const params = new URLSearchParams({
+    subject,
+    body: bodyLines.join("\n"),
+  });
+
+  return `mailto:rithikagampawork@gmail.com?${params.toString()}`;
+};
+
 if (contactMailLink) {
   contactMailLink.addEventListener("click", (event) => {
     event.preventDefault();
@@ -237,9 +260,16 @@ if (contactMailLink) {
     const formData = contactForm ? new FormData(contactForm) : null;
     const name = String(formData?.get("name") || "").trim();
     const message = String(formData?.get("message") || "").trim();
-    const gmailComposeUrl = buildGmailComposeUrl({ name, message });
+    const destinationUrl = shouldUseMailApp
+      ? buildMailtoUrl({ name, message })
+      : buildGmailComposeUrl({ name, message });
 
-    window.open(gmailComposeUrl, "_blank", "noopener,noreferrer");
+    if (shouldUseMailApp) {
+      window.location.href = destinationUrl;
+      return;
+    }
+
+    window.open(destinationUrl, "_blank", "noopener,noreferrer");
   });
 }
 
@@ -250,11 +280,19 @@ if (contactForm && formNote) {
     const formData = new FormData(contactForm);
     const name = String(formData.get("name") || "").trim();
     const message = String(formData.get("message") || "").trim();
-    const gmailComposeUrl = buildGmailComposeUrl({ name, message });
+    const destinationUrl = shouldUseMailApp
+      ? buildMailtoUrl({ name, message })
+      : buildGmailComposeUrl({ name, message });
 
-    formNote.textContent = "Opening Gmail in a new tab...";
+    formNote.textContent = shouldUseMailApp
+      ? "Opening your mail app..."
+      : "Opening Gmail in a new tab...";
 
-    window.open(gmailComposeUrl, "_blank", "noopener,noreferrer");
+    if (shouldUseMailApp) {
+      window.location.href = destinationUrl;
+    } else {
+      window.open(destinationUrl, "_blank", "noopener,noreferrer");
+    }
 
     contactForm.reset();
   });
