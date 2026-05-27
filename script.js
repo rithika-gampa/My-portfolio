@@ -11,6 +11,7 @@ const shouldUseMailApp =
   /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 const canUseCursorFx =
   window.matchMedia("(pointer: fine)").matches && !reduceMotion;
+let mailLaunchLocked = false;
 
 if (canUseCursorFx) {
   const cursorCore = document.createElement("span");
@@ -250,6 +251,24 @@ const buildMailtoUrl = ({ name = "", message = "" } = {}) => {
   return `mailto:rithikagampawork@gmail.com?subject=${encodedSubject}&body=${encodedBody}`;
 };
 
+const openContactDestination = (destinationUrl) => {
+  if (mailLaunchLocked) {
+    return;
+  }
+
+  mailLaunchLocked = true;
+  window.setTimeout(() => {
+    mailLaunchLocked = false;
+  }, 1200);
+
+  if (shouldUseMailApp) {
+    window.location.href = destinationUrl;
+    return;
+  }
+
+  window.open(destinationUrl, "_blank", "noopener,noreferrer");
+};
+
 if (contactMailLink) {
   contactMailLink.addEventListener("click", (event) => {
     event.preventDefault();
@@ -260,13 +279,7 @@ if (contactMailLink) {
     const destinationUrl = shouldUseMailApp
       ? buildMailtoUrl({ name, message })
       : buildGmailComposeUrl({ name, message });
-
-    if (shouldUseMailApp) {
-      window.location.href = destinationUrl;
-      return;
-    }
-
-    window.open(destinationUrl, "_blank", "noopener,noreferrer");
+    openContactDestination(destinationUrl);
   });
 }
 
@@ -285,11 +298,7 @@ if (contactForm && formNote) {
       ? "Opening your mail app..."
       : "Opening Gmail in a new tab...";
 
-    if (shouldUseMailApp) {
-      window.location.href = destinationUrl;
-    } else {
-      window.open(destinationUrl, "_blank", "noopener,noreferrer");
-    }
+    openContactDestination(destinationUrl);
 
     contactForm.reset();
   });
