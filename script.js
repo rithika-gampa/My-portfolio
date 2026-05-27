@@ -182,23 +182,19 @@ sections.forEach((section) => sectionObserver.observe(section));
 const revealObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
-      if (entry.isIntersecting) {
+      if (entry.intersectionRatio >= 0.18) {
         entry.target.classList.add("is-visible");
         return;
       }
 
-      const isFullyOutsideViewport =
-        entry.boundingClientRect.bottom <= 0 ||
-        entry.boundingClientRect.top >= window.innerHeight;
-
-      if (isFullyOutsideViewport) {
+      if (entry.intersectionRatio === 0) {
         entry.target.classList.remove("is-visible");
       }
     });
   },
   {
-    threshold: 0.18,
-    rootMargin: "0px 0px -8% 0px",
+    threshold: [0, 0.18],
+    rootMargin: "0px",
   }
 );
 
